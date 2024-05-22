@@ -657,7 +657,7 @@ pub fn gen_unions(out: &mut String, unions: &BTreeMap<String, InferredUnion>, me
                 .unwrap_or_else(|| schema.schema_data.title.clone().unwrap());
             let variant_name = meta.schema_to_rust_type(&object_name);
             let type_name = meta.schema_to_rust_type(variant_schema);
-            if variant_name.to_snake_case() != object_name {
+            if variant_to_serde_snake_case(&variant_name) != object_name {
                 write_serde_rename(out, &object_name);
             }
             out.push_str("    ");
@@ -692,6 +692,22 @@ pub fn gen_unions(out: &mut String, unions: &BTreeMap<String, InferredUnion>, me
             .unwrap();
         }
     }
+}
+
+/// This code is taken from serde RenameRule::apply_to_variant
+/// It differs in some cases from heck, so we need to make sure we
+/// do exactly the same when figuring out whether we need a serde(rename)
+/// e.g. heck_snake(Self_) = self
+/// serde_snake(Self_) = self_
+pub fn variant_to_serde_snake_case(variant: &str) -> String {
+    let mut snake = String::new();
+    for (i, ch) in variant.char_indices() {
+        if i > 0 && ch.is_uppercase() {
+            snake.push('_');
+        }
+        snake.push(ch.to_ascii_lowercase());
+    }
+    snake
 }
 
 #[tracing::instrument(skip_all)]
@@ -732,7 +748,7 @@ pub fn gen_enums(out: &mut String, enums: &BTreeMap<String, InferredEnum>, meta:
             if variant_name.trim().is_empty() {
                 panic!("unhandled enum variant: {:?}", wire_name)
             }
-            if &variant_name.to_snake_case() != wire_name {
+            if &variant_to_serde_snake_case(&variant_name) != wire_name {
                 write_serde_rename(out, wire_name);
             }
             out.push_str("    ");
@@ -1283,10 +1299,6 @@ pub fn gen_field_rust_type<T: Borrow<Schema>>(
         // Not sure why this is here, but we want to preserve it for now
         return "bool".into();
     }
-    if ty.contains("List<") {
-        // N.B. return immediately; we use `Default` for list rather than `Option`
-        return ty;
-    }
 
     // currency_options field is represented by an optional HashMap<String, T>, where the String is the currency code in ISO 4217 format.
     if field_name == "currency_options" {
@@ -1375,7 +1387,7 @@ pub fn gen_impl_requests(
                 let query_path = segments.join("/");
                 writedoc!(&mut out, r#"
                     pub fn list(client: &Client, params: &{params_name}<'_>) -> Response<List<{rust_struct}>> {{
-                       client.get_query("/{query_path}", &params)
+                       client.get_query("/{query_path}", params)
                     }}
                 "#).unwrap();
                 methods.insert(MethodTypes::List, out);
@@ -1402,7 +1414,7 @@ pub fn gen_impl_requests(
                         out.push_str("> {\n");
                         out.push_str("        client.get_query(");
                         out.push_str(&format!("&format!(\"/{}/{{}}\", id)", segments[0]));
-                        out.push_str(", &Expand { expand })\n");
+                        out.push_str(", Expand { expand })\n");
                     } else {
                         out.push_str(") -> Response<");
                         out.push_str(&rust_struct);
@@ -1461,6 +1473,7 @@ pub fn gen_impl_requests(
                 out.push_str("<'_>) -> Response<");
                 out.push_str(&return_type);
                 out.push_str("> {\n");
+                out.push_str("        #[allow(clippy::needless_borrows_for_generic_args)]\n");
                 out.push_str("        client.post_form(\"/");
                 out.push_str(&segments.join("/"));
                 out.push_str("\", &params)\n");
@@ -1501,6 +1514,7 @@ pub fn gen_impl_requests(
                     out.push_str("<'_>) -> Response<");
                     out.push_str(&return_type);
                     out.push_str("> {\n");
+                    out.push_str("        #[allow(clippy::needless_borrows_for_generic_args)]\n");
                     out.push_str("        client.post_form(");
                     out.push_str(&format!("&format!(\"/{}/{{}}\", id)", segments[0]));
                     out.push_str(", &params)\n");

@@ -213,7 +213,7 @@ impl Charge {
     ///
     /// The charges are returned in sorted order, with the most recent charges appearing first.
     pub fn list(client: &Client, params: &ListCharges<'_>) -> Response<List<Charge>> {
-        client.get_query("/charges", &params)
+        client.get_query("/charges", params)
     }
 
     /// This method is no longer recommended—use the [Payment Intents API](https://stripe.com/docs/api/payment_intents)
@@ -221,6 +221,7 @@ impl Charge {
     ///
     /// Confirmation of the PaymentIntent creates the `Charge` object used to request payment.
     pub fn create(client: &Client, params: CreateCharge<'_>) -> Response<Charge> {
+        #[allow(clippy::needless_borrows_for_generic_args)]
         client.post_form("/charges", &params)
     }
 
@@ -229,13 +230,14 @@ impl Charge {
     /// Supply the unique charge ID that was returned from your previous request, and Stripe will return the corresponding charge information.
     /// The same information is returned when creating or refunding the charge.
     pub fn retrieve(client: &Client, id: &ChargeId, expand: &[&str]) -> Response<Charge> {
-        client.get_query(&format!("/charges/{}", id), &Expand { expand })
+        client.get_query(&format!("/charges/{}", id), Expand { expand })
     }
 
     /// Updates the specified charge by setting the values of the parameters passed.
     ///
     /// Any parameters not provided will be left unchanged.
     pub fn update(client: &Client, id: &ChargeId, params: UpdateCharge<'_>) -> Response<Charge> {
+        #[allow(clippy::needless_borrows_for_generic_args)]
         client.post_form(&format!("/charges/{}", id), &params)
     }
 }
@@ -465,6 +467,9 @@ pub struct PaymentMethodDetails {
 
     #[serde(skip_serializing_if = "Option::is_none")]
     pub stripe_account: Option<PaymentMethodDetailsStripeAccount>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub swish: Option<PaymentMethodDetailsSwish>,
 
     /// The type of transaction-specific details of the payment method used in the payment, one of `ach_credit_transfer`, `ach_debit`, `acss_debit`, `alipay`, `au_becs_debit`, `bancontact`, `card`, `card_present`, `eps`, `giropay`, `ideal`, `klarna`, `multibanco`, `p24`, `sepa_debit`, `sofort`, `stripe_account`, or `wechat`.
     /// An additional hash is included on `payment_method_details` with a name matching this value.
@@ -1306,7 +1311,7 @@ pub struct PaymentMethodDetailsOxxo {
 pub struct PaymentMethodDetailsP24 {
     /// The customer's bank.
     ///
-    /// Can be one of `ing`, `citi_handlowy`, `tmobile_usbugi_bankowe`, `plus_bank`, `etransfer_pocztowy24`, `banki_spbdzielcze`, `bank_nowy_bfg_sa`, `getin_bank`, `blik`, `noble_pay`, `ideabank`, `envelobank`, `santander_przelew24`, `nest_przelew`, `mbank_mtransfer`, `inteligo`, `pbac_z_ipko`, `bnp_paribas`, `credit_agricole`, `toyota_bank`, `bank_pekao_sa`, `volkswagen_bank`, `bank_millennium`, `alior_bank`, or `boz`.
+    /// Can be one of `ing`, `citi_handlowy`, `tmobile_usbugi_bankowe`, `plus_bank`, `etransfer_pocztowy24`, `banki_spbdzielcze`, `bank_nowy_bfg_sa`, `getin_bank`, `velobank`, `blik`, `noble_pay`, `ideabank`, `envelobank`, `santander_przelew24`, `nest_przelew`, `mbank_mtransfer`, `inteligo`, `pbac_z_ipko`, `bnp_paribas`, `credit_agricole`, `toyota_bank`, `bank_pekao_sa`, `volkswagen_bank`, `bank_millennium`, `alior_bank`, or `boz`.
     pub bank: Option<PaymentMethodDetailsP24Bank>,
 
     /// Unique reference for this Przelewy24 payment.
@@ -1440,6 +1445,20 @@ pub struct PaymentMethodDetailsSofort {
 
 #[derive(Clone, Debug, Default, Deserialize, Serialize)]
 pub struct PaymentMethodDetailsStripeAccount {}
+
+#[derive(Clone, Debug, Default, Deserialize, Serialize)]
+pub struct PaymentMethodDetailsSwish {
+    /// Uniquely identifies the payer's Swish account.
+    ///
+    /// You can use this attribute to check whether two Swish transactions were paid for by the same payer.
+    pub fingerprint: Option<String>,
+
+    /// Payer bank reference number for the payment.
+    pub payment_reference: Option<String>,
+
+    /// The last four digits of the Swish account phone number.
+    pub verified_phone_last4: Option<String>,
+}
 
 #[derive(Clone, Debug, Default, Deserialize, Serialize)]
 pub struct PaymentMethodDetailsUsBankAccount {
@@ -2757,6 +2776,7 @@ pub enum PaymentMethodDetailsP24Bank {
     SantanderPrzelew24,
     TmobileUsbugiBankowe,
     ToyotaBank,
+    Velobank,
     VolkswagenBank,
 }
 
@@ -2787,6 +2807,7 @@ impl PaymentMethodDetailsP24Bank {
             PaymentMethodDetailsP24Bank::SantanderPrzelew24 => "santander_przelew24",
             PaymentMethodDetailsP24Bank::TmobileUsbugiBankowe => "tmobile_usbugi_bankowe",
             PaymentMethodDetailsP24Bank::ToyotaBank => "toyota_bank",
+            PaymentMethodDetailsP24Bank::Velobank => "velobank",
             PaymentMethodDetailsP24Bank::VolkswagenBank => "volkswagen_bank",
         }
     }

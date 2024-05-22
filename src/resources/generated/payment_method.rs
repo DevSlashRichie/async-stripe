@@ -136,6 +136,9 @@ pub struct PaymentMethod {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub sofort: Option<PaymentMethodSofort>,
 
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub swish: Option<PaymentMethodSwish>,
+
     /// The type of the PaymentMethod.
     ///
     /// An additional hash is included on the PaymentMethod with a name matching this value.
@@ -158,13 +161,14 @@ impl PaymentMethod {
     ///
     /// If you want to list the PaymentMethods attached to a Customer for payments, you should use the [List a Customer’s PaymentMethods](https://stripe.com/docs/api/payment_methods/customer_list) API instead.
     pub fn list(client: &Client, params: &ListPaymentMethods<'_>) -> Response<List<PaymentMethod>> {
-        client.get_query("/payment_methods", &params)
+        client.get_query("/payment_methods", params)
     }
 
     /// Creates a PaymentMethod object.
     ///
     /// Read the [Stripe.js reference](https://stripe.com/docs/stripe-js/reference#stripe-create-payment-method) to learn how to create PaymentMethods via Stripe.js.  Instead of creating a PaymentMethod directly, we recommend using the [PaymentIntents](https://stripe.com/docs/payments/accept-a-payment) API to accept a payment immediately or the [SetupIntent](https://stripe.com/docs/payments/save-and-reuse) API to collect payment method details ahead of a future payment.
     pub fn create(client: &Client, params: CreatePaymentMethod<'_>) -> Response<PaymentMethod> {
+        #[allow(clippy::needless_borrows_for_generic_args)]
         client.post_form("/payment_methods", &params)
     }
 
@@ -176,7 +180,7 @@ impl PaymentMethod {
         id: &PaymentMethodId,
         expand: &[&str],
     ) -> Response<PaymentMethod> {
-        client.get_query(&format!("/payment_methods/{}", id), &Expand { expand })
+        client.get_query(&format!("/payment_methods/{}", id), Expand { expand })
     }
 
     /// Updates a PaymentMethod object.
@@ -187,6 +191,7 @@ impl PaymentMethod {
         id: &PaymentMethodId,
         params: UpdatePaymentMethod<'_>,
     ) -> Response<PaymentMethod> {
+        #[allow(clippy::needless_borrows_for_generic_args)]
         client.post_form(&format!("/payment_methods/{}", id), &params)
     }
 }
@@ -341,7 +346,9 @@ pub struct Networks {
     /// All available networks for the card.
     pub available: Vec<String>,
 
-    /// The preferred network for the card.
+    /// The preferred network for co-branded cards.
+    ///
+    /// Can be `cartes_bancaires`, `mastercard`, `visa` or `invalid_preference` if requested network is not valid for the card.
     pub preferred: Option<String>,
 }
 
@@ -739,6 +746,9 @@ pub struct PaymentMethodSofort {
 }
 
 #[derive(Clone, Debug, Default, Deserialize, Serialize)]
+pub struct PaymentMethodSwish {}
+
+#[derive(Clone, Debug, Default, Deserialize, Serialize)]
 pub struct PaymentMethodUsBankAccount {
     /// Account holder type: individual or company.
     pub account_holder_type: Option<PaymentMethodUsBankAccountAccountHolderType>,
@@ -974,6 +984,10 @@ pub struct CreatePaymentMethod<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub sofort: Option<CreatePaymentMethodSofort>,
 
+    /// If this is a `swish` PaymentMethod, this hash contains details about the Swish payment method.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub swish: Option<CreatePaymentMethodSwish>,
+
     /// The type of the PaymentMethod.
     ///
     /// An additional hash is included on the PaymentMethod with a name matching this value.
@@ -1034,6 +1048,7 @@ impl<'a> CreatePaymentMethod<'a> {
             revolut_pay: Default::default(),
             sepa_debit: Default::default(),
             sofort: Default::default(),
+            swish: Default::default(),
             type_: Default::default(),
             us_bank_account: Default::default(),
             wechat_pay: Default::default(),
@@ -1295,6 +1310,9 @@ pub struct CreatePaymentMethodSofort {
     /// Two-letter ISO code representing the country the bank account is located in.
     pub country: CreatePaymentMethodSofortCountry,
 }
+
+#[derive(Clone, Debug, Default, Deserialize, Serialize)]
+pub struct CreatePaymentMethodSwish {}
 
 #[derive(Clone, Debug, Default, Deserialize, Serialize)]
 pub struct CreatePaymentMethodUsBankAccount {
@@ -1689,6 +1707,7 @@ pub enum CreatePaymentMethodP24Bank {
     SantanderPrzelew24,
     TmobileUsbugiBankowe,
     ToyotaBank,
+    Velobank,
     VolkswagenBank,
 }
 
@@ -1719,6 +1738,7 @@ impl CreatePaymentMethodP24Bank {
             CreatePaymentMethodP24Bank::SantanderPrzelew24 => "santander_przelew24",
             CreatePaymentMethodP24Bank::TmobileUsbugiBankowe => "tmobile_usbugi_bankowe",
             CreatePaymentMethodP24Bank::ToyotaBank => "toyota_bank",
+            CreatePaymentMethodP24Bank::Velobank => "velobank",
             CreatePaymentMethodP24Bank::VolkswagenBank => "volkswagen_bank",
         }
     }
@@ -2278,6 +2298,7 @@ pub enum PaymentMethodP24Bank {
     SantanderPrzelew24,
     TmobileUsbugiBankowe,
     ToyotaBank,
+    Velobank,
     VolkswagenBank,
 }
 
@@ -2308,6 +2329,7 @@ impl PaymentMethodP24Bank {
             PaymentMethodP24Bank::SantanderPrzelew24 => "santander_przelew24",
             PaymentMethodP24Bank::TmobileUsbugiBankowe => "tmobile_usbugi_bankowe",
             PaymentMethodP24Bank::ToyotaBank => "toyota_bank",
+            PaymentMethodP24Bank::Velobank => "velobank",
             PaymentMethodP24Bank::VolkswagenBank => "volkswagen_bank",
         }
     }
@@ -2365,6 +2387,7 @@ pub enum PaymentMethodType {
     RevolutPay,
     SepaDebit,
     Sofort,
+    Swish,
     UsBankAccount,
     WechatPay,
     Zip,
@@ -2404,6 +2427,7 @@ impl PaymentMethodType {
             PaymentMethodType::RevolutPay => "revolut_pay",
             PaymentMethodType::SepaDebit => "sepa_debit",
             PaymentMethodType::Sofort => "sofort",
+            PaymentMethodType::Swish => "swish",
             PaymentMethodType::UsBankAccount => "us_bank_account",
             PaymentMethodType::WechatPay => "wechat_pay",
             PaymentMethodType::Zip => "zip",
@@ -2461,6 +2485,7 @@ pub enum PaymentMethodTypeFilter {
     RevolutPay,
     SepaDebit,
     Sofort,
+    Swish,
     UsBankAccount,
     WechatPay,
     Zip,
@@ -2498,6 +2523,7 @@ impl PaymentMethodTypeFilter {
             PaymentMethodTypeFilter::RevolutPay => "revolut_pay",
             PaymentMethodTypeFilter::SepaDebit => "sepa_debit",
             PaymentMethodTypeFilter::Sofort => "sofort",
+            PaymentMethodTypeFilter::Swish => "swish",
             PaymentMethodTypeFilter::UsBankAccount => "us_bank_account",
             PaymentMethodTypeFilter::WechatPay => "wechat_pay",
             PaymentMethodTypeFilter::Zip => "zip",

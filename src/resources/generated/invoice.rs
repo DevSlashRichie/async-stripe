@@ -284,8 +284,8 @@ pub struct Invoice {
     /// The individual line items that make up the invoice.
     ///
     /// `lines` is sorted as follows: (1) pending invoice items (including prorations) in reverse chronological order, (2) subscription items in reverse chronological order, and (3) invoice items added after invoice creation in chronological order.
-    #[serde(default)]
-    pub lines: List<InvoiceLineItem>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub lines: Option<List<InvoiceLineItem>>,
 
     /// Has the value `true` if the object exists in live mode or the value `false` if the object exists in test mode.
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -473,19 +473,20 @@ impl Invoice {
     ///
     /// The invoices are returned sorted by creation date, with the most recently created invoices appearing first.
     pub fn list(client: &Client, params: &ListInvoices<'_>) -> Response<List<Invoice>> {
-        client.get_query("/invoices", &params)
+        client.get_query("/invoices", params)
     }
 
     /// This endpoint creates a draft invoice for a given customer.
     ///
     /// The invoice remains a draft until you [finalize](https://stripe.com/docs/api#finalize_invoice) the invoice, which allows you to [pay](https://stripe.com/docs/api#pay_invoice) or [send](https://stripe.com/docs/api#send_invoice) the invoice to your customers.
     pub fn create(client: &Client, params: CreateInvoice<'_>) -> Response<Invoice> {
+        #[allow(clippy::needless_borrows_for_generic_args)]
         client.post_form("/invoices", &params)
     }
 
     /// Retrieves the invoice with the given ID.
     pub fn retrieve(client: &Client, id: &InvoiceId, expand: &[&str]) -> Response<Invoice> {
-        client.get_query(&format!("/invoices/{}", id), &Expand { expand })
+        client.get_query(&format!("/invoices/{}", id), Expand { expand })
     }
 
     /// Permanently deletes a one-off invoice draft.
@@ -1555,6 +1556,7 @@ impl std::default::Default for CollectionMethod {
 #[serde(rename_all = "snake_case")]
 pub enum CreateInvoiceAutomaticTaxLiabilityType {
     Account,
+    #[serde(rename = "self")]
     Self_,
 }
 
@@ -1621,6 +1623,7 @@ impl std::default::Default for CreateInvoiceFromInvoiceAction {
 #[serde(rename_all = "snake_case")]
 pub enum CreateInvoiceIssuerType {
     Account,
+    #[serde(rename = "self")]
     Self_,
 }
 
