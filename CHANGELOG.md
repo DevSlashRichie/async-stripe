@@ -1,3 +1,66 @@
+# [0.40.0](https://github.com/arlyon/async-stripe/compare/v0.39.2...v0.40.0) (2024-09-26)
+
+
+### Features
+
+* export checkout_session_ext ([e4e7220](https://github.com/arlyon/async-stripe/commit/e4e722007a5164413054a958ea13858afbccaafd)), closes [#614](https://github.com/arlyon/async-stripe/issues/614)
+
+## [0.39.2](https://github.com/arlyon/async-stripe/compare/v0.39.1...v0.39.2) (2024-09-24)
+
+
+### Bug Fixes
+
+* erroneous deref clippy lint ([1fcbb29](https://github.com/arlyon/async-stripe/commit/1fcbb2958b4b7900f2463cedf2375179411a2333))
+
+## [0.39.1](https://github.com/arlyon/async-stripe/compare/v0.39.0...v0.39.1) (2024-09-03)
+
+
+### Bug Fixes
+
+* correct docs host and path for API references ([539836d](https://github.com/arlyon/async-stripe/commit/539836d01904742110171a9d6ef877b4cc3f87a3))
+
+# [0.39.0](https://github.com/arlyon/async-stripe/compare/v0.38.1...v0.39.0) (2024-08-31)
+
+
+### Bug Fixes
+
+* `post` -> `post_form` ([bc39260](https://github.com/arlyon/async-stripe/commit/bc3926039eb50d48cf8f20ddb8110c847e7f7f00))
+* Move `promotion_code_ext` to `products` feature ([32435f3](https://github.com/arlyon/async-stripe/commit/32435f38c242ad47d8c992d1178736c460f107f2))
+* Re-export ([24f1782](https://github.com/arlyon/async-stripe/commit/24f17823b1812886bda32762f9de66dceb83559b))
+
+
+### Features
+
+* Create promotion code ([0fde9eb](https://github.com/arlyon/async-stripe/commit/0fde9eb6bc3333bab3bb135709697d114017be4a))
+
+## [0.38.1](https://github.com/arlyon/async-stripe/compare/v0.38.0...v0.38.1) (2024-08-06)
+
+
+### Bug Fixes
+
+* [#578](https://github.com/arlyon/async-stripe/issues/578) allow arbitrary strings for priceId ([a16bc6e](https://github.com/arlyon/async-stripe/commit/a16bc6e80c1a5e87bf376cbfd6b1f2a8caef992e))
+
+# [0.38.0](https://github.com/arlyon/async-stripe/compare/v0.37.3...v0.38.0) (2024-07-31)
+
+
+### Features
+
+* add support for TestClock operations ([d792798](https://github.com/arlyon/async-stripe/commit/d792798c3f027e0c57b132ddf168dbd03fcdd926)), closes [#574](https://github.com/arlyon/async-stripe/issues/574)
+
+## [0.37.3](https://github.com/arlyon/async-stripe/compare/v0.37.2...v0.37.3) (2024-07-29)
+
+
+### Bug Fixes
+
+* linting issue for Rust 1.80 ([9232213](https://github.com/arlyon/async-stripe/commit/9232213c0665622c91b328d1b2ff20e7f9ff7357))
+
+## [0.37.2](https://github.com/arlyon/async-stripe/compare/v0.37.1...v0.37.2) (2024-07-23)
+
+
+### Bug Fixes
+
+* rtx id prefix ([67ea232](https://github.com/arlyon/async-stripe/commit/67ea2325ba10fd0bc1b5c9e3a3436738caf4a98c))
+
 ## [0.37.1](https://github.com/arlyon/async-stripe/compare/v0.37.0...v0.37.1) (2024-05-24)
 
 

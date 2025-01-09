@@ -24,6 +24,7 @@ mod core {
     pub mod payout_ext;
     pub mod placeholders;
     pub mod setup_intent_ext;
+    pub mod test_clock_ext;
     pub mod token_ext;
     pub mod transfer_reversal_ext;
 }
@@ -55,6 +56,7 @@ mod billing {
 mod products {
     pub mod price_ext;
     pub mod product_ext;
+    pub mod promotion_code_ext;
 }
 
 #[path = "resources"]
@@ -112,6 +114,7 @@ pub use {
         payment_source::*,
         placeholders::*,
         payout_ext::*,
+        test_clock_ext::*,
         token_ext::*,
         setup_intent_ext::*,
     },
@@ -184,6 +187,7 @@ pub use {
 #[rustfmt::skip]
 #[cfg(feature = "checkout")]
 pub use {
+    checkout::checkout_session_ext::*,
     generated::checkout::{
         checkout_session::*,
         payment_link::*,
@@ -197,6 +201,7 @@ pub use {
     products::{
         product_ext::*,
         price_ext::*,
+        promotion_code_ext::*,
     }
 };
 
