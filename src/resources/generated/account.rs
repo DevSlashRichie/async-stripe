@@ -919,6 +919,10 @@ pub struct CreateAccount<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub company: Option<CompanyParams>,
 
+    /// A hash of configuration describing the account controller's attributes.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub controller: Option<CreateAccountController>,
+
     /// The country in which the account holder resides, or in which the business is legally established.
     ///
     /// This should be an ISO 3166-1 alpha-2 country code.
@@ -1007,6 +1011,7 @@ impl<'a> CreateAccount<'a> {
             settings: Default::default(),
             tos_acceptance: Default::default(),
             type_: Default::default(),
+            controller: Default::default(),
         }
     }
 }
@@ -1307,6 +1312,221 @@ pub struct CompanyParams {
     /// Information on the verification state of the company.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub verification: Option<CompanyVerificationParams>,
+}
+
+#[derive(Clone, Debug, Default, Deserialize, Serialize)]
+pub struct CreateAccountCapabilities {
+    /// The acss_debit_payments capability.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub acss_debit_payments: Option<CreateAccountCapabilitiesAcssDebitPayments>,
+
+    /// The affirm_payments capability.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub affirm_payments: Option<CreateAccountCapabilitiesAffirmPayments>,
+
+    /// The afterpay_clearpay_payments capability.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub afterpay_clearpay_payments: Option<CreateAccountCapabilitiesAfterpayClearpayPayments>,
+
+    /// The alma_payments capability.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub alma_payments: Option<CreateAccountCapabilitiesAlmaPayments>,
+
+    /// The amazon_pay_payments capability.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub amazon_pay_payments: Option<CreateAccountCapabilitiesAmazonPayPayments>,
+
+    /// The au_becs_debit_payments capability.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub au_becs_debit_payments: Option<CreateAccountCapabilitiesAuBecsDebitPayments>,
+
+    /// The bacs_debit_payments capability.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub bacs_debit_payments: Option<CreateAccountCapabilitiesBacsDebitPayments>,
+
+    /// The bancontact_payments capability.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub bancontact_payments: Option<CreateAccountCapabilitiesBancontactPayments>,
+
+    /// The bank_transfer_payments capability.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub bank_transfer_payments: Option<CreateAccountCapabilitiesBankTransferPayments>,
+
+    /// The blik_payments capability.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub blik_payments: Option<CreateAccountCapabilitiesBlikPayments>,
+
+    /// The boleto_payments capability.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub boleto_payments: Option<CreateAccountCapabilitiesBoletoPayments>,
+
+    /// The card_issuing capability.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub card_issuing: Option<CreateAccountCapabilitiesCardIssuing>,
+
+    /// The card_payments capability.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub card_payments: Option<CreateAccountCapabilitiesCardPayments>,
+
+    /// The cartes_bancaires_payments capability.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub cartes_bancaires_payments: Option<CreateAccountCapabilitiesCartesBancairesPayments>,
+
+    /// The cashapp_payments capability.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub cashapp_payments: Option<CreateAccountCapabilitiesCashappPayments>,
+
+    /// The eps_payments capability.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub eps_payments: Option<CreateAccountCapabilitiesEpsPayments>,
+
+    /// The fpx_payments capability.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub fpx_payments: Option<CreateAccountCapabilitiesFpxPayments>,
+
+    /// The gb_bank_transfer_payments capability.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub gb_bank_transfer_payments: Option<CreateAccountCapabilitiesGbBankTransferPayments>,
+
+    /// The giropay_payments capability.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub giropay_payments: Option<CreateAccountCapabilitiesGiropayPayments>,
+
+    /// The grabpay_payments capability.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub grabpay_payments: Option<CreateAccountCapabilitiesGrabpayPayments>,
+
+    /// The ideal_payments capability.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub ideal_payments: Option<CreateAccountCapabilitiesIdealPayments>,
+
+    /// The india_international_payments capability.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub india_international_payments: Option<CreateAccountCapabilitiesIndiaInternationalPayments>,
+
+    /// The jcb_payments capability.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub jcb_payments: Option<CreateAccountCapabilitiesJcbPayments>,
+
+    /// The jp_bank_transfer_payments capability.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub jp_bank_transfer_payments: Option<CreateAccountCapabilitiesJpBankTransferPayments>,
+
+    /// The kakao_pay_payments capability.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub kakao_pay_payments: Option<CreateAccountCapabilitiesKakaoPayPayments>,
+
+    /// The klarna_payments capability.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub klarna_payments: Option<CreateAccountCapabilitiesKlarnaPayments>,
+
+    /// The konbini_payments capability.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub konbini_payments: Option<CreateAccountCapabilitiesKonbiniPayments>,
+
+    /// The kr_card_payments capability.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub kr_card_payments: Option<CreateAccountCapabilitiesKrCardPayments>,
+
+    /// The legacy_payments capability.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub legacy_payments: Option<CreateAccountCapabilitiesLegacyPayments>,
+
+    /// The link_payments capability.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub link_payments: Option<CreateAccountCapabilitiesLinkPayments>,
+
+    /// The mobilepay_payments capability.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub mobilepay_payments: Option<CreateAccountCapabilitiesMobilepayPayments>,
+
+    /// The multibanco_payments capability.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub multibanco_payments: Option<CreateAccountCapabilitiesMultibancoPayments>,
+
+    /// The mx_bank_transfer_payments capability.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub mx_bank_transfer_payments: Option<CreateAccountCapabilitiesMxBankTransferPayments>,
+
+    /// The naver_pay_payments capability.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub naver_pay_payments: Option<CreateAccountCapabilitiesNaverPayPayments>,
+
+    /// The oxxo_payments capability.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub oxxo_payments: Option<CreateAccountCapabilitiesOxxoPayments>,
+
+    /// The p24_payments capability.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub p24_payments: Option<CreateAccountCapabilitiesP24Payments>,
+
+    /// The payco_payments capability.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub payco_payments: Option<CreateAccountCapabilitiesPaycoPayments>,
+
+    /// The paynow_payments capability.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub paynow_payments: Option<CreateAccountCapabilitiesPaynowPayments>,
+
+    /// The promptpay_payments capability.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub promptpay_payments: Option<CreateAccountCapabilitiesPromptpayPayments>,
+
+    /// The revolut_pay_payments capability.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub revolut_pay_payments: Option<CreateAccountCapabilitiesRevolutPayPayments>,
+
+    /// The samsung_pay_payments capability.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub samsung_pay_payments: Option<CreateAccountCapabilitiesSamsungPayPayments>,
+
+    /// The sepa_bank_transfer_payments capability.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub sepa_bank_transfer_payments: Option<CreateAccountCapabilitiesSepaBankTransferPayments>,
+
+    /// The sepa_debit_payments capability.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub sepa_debit_payments: Option<CreateAccountCapabilitiesSepaDebitPayments>,
+
+    /// The sofort_payments capability.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub sofort_payments: Option<CreateAccountCapabilitiesSofortPayments>,
+
+    /// The swish_payments capability.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub swish_payments: Option<CreateAccountCapabilitiesSwishPayments>,
+
+    /// The tax_reporting_us_1099_k capability.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub tax_reporting_us_1099_k: Option<CreateAccountCapabilitiesTaxReportingUs1099K>,
+
+    /// The tax_reporting_us_1099_misc capability.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub tax_reporting_us_1099_misc: Option<CreateAccountCapabilitiesTaxReportingUs1099Misc>,
+
+    /// The transfers capability.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub transfers: Option<CreateAccountCapabilitiesTransfers>,
+
+    /// The treasury capability.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub treasury: Option<CreateAccountCapabilitiesTreasury>,
+
+    /// The twint_payments capability.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub twint_payments: Option<CreateAccountCapabilitiesTwintPayments>,
+
+    /// The us_bank_account_ach_payments capability.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub us_bank_account_ach_payments: Option<CreateAccountCapabilitiesUsBankAccountAchPayments>,
+
+    /// The us_bank_transfer_payments capability.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub us_bank_transfer_payments: Option<CreateAccountCapabilitiesUsBankTransferPayments>,
+
+    /// The zip_payments capability.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub zip_payments: Option<CreateAccountCapabilitiesZipPayments>,
 }
 
 #[derive(Clone, Debug, Default, Deserialize, Serialize)]
