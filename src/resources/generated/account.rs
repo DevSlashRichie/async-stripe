@@ -1315,6 +1315,203 @@ pub struct CompanyParams {
 }
 
 #[derive(Clone, Debug, Default, Deserialize, Serialize)]
+pub struct CreateAccountController {
+    /// A hash of configuration for who pays Stripe fees for product usage on this account.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub fees: Option<CreateAccountControllerFees>,
+
+    /// A hash of configuration for products that have negative balance liability, and whether Stripe or a Connect application is responsible for them.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub losses: Option<CreateAccountControllerLosses>,
+
+    /// A value indicating responsibility for collecting updated information when requirements on the account are due or change.
+    ///
+    /// Defaults to `stripe`.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub requirement_collection: Option<CreateAccountControllerRequirementCollection>,
+
+    /// A hash of configuration for Stripe-hosted dashboards.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub stripe_dashboard: Option<CreateAccountControllerStripeDashboard>,
+}
+
+#[derive(Clone, Debug, Default, Deserialize, Serialize)]
+pub struct CreateAccountCapabilitiesZipPayments {
+    /// Passing true requests the capability for the account, if it is not already requested.
+    ///
+    /// A requested capability may not immediately become active.
+    /// Any requirements to activate the capability are returned in the `requirements` arrays.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub requested: Option<bool>,
+}
+
+#[derive(Copy, Clone, Debug, Deserialize, Serialize, Eq, PartialEq)]
+#[serde(rename_all = "snake_case")]
+pub enum CreateAccountControllerFeesPayer {
+    Account,
+    Application,
+}
+
+impl CreateAccountControllerFeesPayer {
+    pub fn as_str(self) -> &'static str {
+        match self {
+            CreateAccountControllerFeesPayer::Account => "account",
+            CreateAccountControllerFeesPayer::Application => "application",
+        }
+    }
+}
+
+impl AsRef<str> for CreateAccountControllerFeesPayer {
+    fn as_ref(&self) -> &str {
+        self.as_str()
+    }
+}
+
+impl std::fmt::Display for CreateAccountControllerFeesPayer {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        self.as_str().fmt(f)
+    }
+}
+impl std::default::Default for CreateAccountControllerFeesPayer {
+    fn default() -> Self {
+        Self::Account
+    }
+}
+
+/// An enum representing the possible values of an `CreateAccountControllerLosses`'s `payments` field.
+#[derive(Copy, Clone, Debug, Deserialize, Serialize, Eq, PartialEq)]
+#[serde(rename_all = "snake_case")]
+pub enum CreateAccountControllerLossesPayments {
+    Application,
+    Stripe,
+}
+
+impl CreateAccountControllerLossesPayments {
+    pub fn as_str(self) -> &'static str {
+        match self {
+            CreateAccountControllerLossesPayments::Application => "application",
+            CreateAccountControllerLossesPayments::Stripe => "stripe",
+        }
+    }
+}
+
+impl AsRef<str> for CreateAccountControllerLossesPayments {
+    fn as_ref(&self) -> &str {
+        self.as_str()
+    }
+}
+
+impl std::fmt::Display for CreateAccountControllerLossesPayments {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        self.as_str().fmt(f)
+    }
+}
+impl std::default::Default for CreateAccountControllerLossesPayments {
+    fn default() -> Self {
+        Self::Application
+    }
+}
+
+/// An enum representing the possible values of an `CreateAccountController`'s `requirement_collection` field.
+#[derive(Copy, Clone, Debug, Deserialize, Serialize, Eq, PartialEq)]
+#[serde(rename_all = "snake_case")]
+pub enum CreateAccountControllerRequirementCollection {
+    Application,
+    Stripe,
+}
+
+impl CreateAccountControllerRequirementCollection {
+    pub fn as_str(self) -> &'static str {
+        match self {
+            CreateAccountControllerRequirementCollection::Application => "application",
+            CreateAccountControllerRequirementCollection::Stripe => "stripe",
+        }
+    }
+}
+
+impl AsRef<str> for CreateAccountControllerRequirementCollection {
+    fn as_ref(&self) -> &str {
+        self.as_str()
+    }
+}
+
+impl std::fmt::Display for CreateAccountControllerRequirementCollection {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        self.as_str().fmt(f)
+    }
+}
+impl std::default::Default for CreateAccountControllerRequirementCollection {
+    fn default() -> Self {
+        Self::Application
+    }
+}
+
+/// An enum representing the possible values of an `CreateAccountControllerStripeDashboard`'s `type` field.
+#[derive(Copy, Clone, Debug, Deserialize, Serialize, Eq, PartialEq)]
+#[serde(rename_all = "snake_case")]
+pub enum CreateAccountControllerStripeDashboardType {
+    Express,
+    Full,
+    None,
+}
+
+impl CreateAccountControllerStripeDashboardType {
+    pub fn as_str(self) -> &'static str {
+        match self {
+            CreateAccountControllerStripeDashboardType::Express => "express",
+            CreateAccountControllerStripeDashboardType::Full => "full",
+            CreateAccountControllerStripeDashboardType::None => "none",
+        }
+    }
+}
+
+impl AsRef<str> for CreateAccountControllerStripeDashboardType {
+    fn as_ref(&self) -> &str {
+        self.as_str()
+    }
+}
+
+impl std::fmt::Display for CreateAccountControllerStripeDashboardType {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        self.as_str().fmt(f)
+    }
+}
+impl std::default::Default for CreateAccountControllerStripeDashboardType {
+    fn default() -> Self {
+        Self::Express
+    }
+}
+
+#[derive(Clone, Debug, Default, Deserialize, Serialize)]
+pub struct CreateAccountControllerFees {
+    /// A value indicating the responsible payer of Stripe fees on this account.
+    ///
+    /// Defaults to `account`.
+    /// Learn more about [fee behavior on connected accounts](https://docs.stripe.com/connect/direct-charges-fee-payer-behavior).
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub payer: Option<CreateAccountControllerFeesPayer>,
+}
+
+#[derive(Clone, Debug, Default, Deserialize, Serialize)]
+pub struct CreateAccountControllerLosses {
+    /// A value indicating who is liable when this account can't pay back negative balances resulting from payments.
+    ///
+    /// Defaults to `stripe`.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub payments: Option<CreateAccountControllerLossesPayments>,
+}
+
+#[derive(Clone, Debug, Default, Deserialize, Serialize)]
+pub struct CreateAccountControllerStripeDashboard {
+    /// Whether this account should have access to the full Stripe Dashboard (`full`), to the Express Dashboard (`express`), or to no Stripe-hosted dashboard (`none`).
+    ///
+    /// Defaults to `full`.
+    #[serde(rename = "type")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub type_: Option<CreateAccountControllerStripeDashboardType>,
+}
+
+#[derive(Clone, Debug, Default, Deserialize, Serialize)]
 pub struct CreateAccountCapabilities {
     /// The acss_debit_payments capability.
     #[serde(skip_serializing_if = "Option::is_none")]
