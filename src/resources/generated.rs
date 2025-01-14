@@ -61,6 +61,7 @@ pub mod payment {
     pub mod payment_method;
     pub mod payment_method_card_present_networks;
     pub mod source;
+    pub mod payment_method_domain;
 }
 
 #[path = "generated"]

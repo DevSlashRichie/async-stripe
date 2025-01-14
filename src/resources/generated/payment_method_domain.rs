@@ -3,7 +3,7 @@
 // ======================================
 
 use crate::client::{Client, Response};
-use crate::ids::{PaymentMethodDomainId};
+use crate::ids::PaymentMethodDomainId;
 use crate::params::{Expand, List, Object, Paginable, Timestamp};
 use serde::{Deserialize, Serialize};
 
@@ -41,26 +41,38 @@ pub struct PaymentMethodDomain {
 }
 
 impl PaymentMethodDomain {
-
     /// Lists the details of existing payment method domains.
-pub fn list(client: &Client, params: &ListPaymentMethodDomains<'_>) -> Response<List<PaymentMethodDomain>> {
-   client.get_query("/payment_method_domains", params)
-}
-
+    pub fn list(
+        client: &Client,
+        params: &ListPaymentMethodDomains<'_>,
+    ) -> Response<List<PaymentMethodDomain>> {
+        client.get_query("/payment_method_domains", params)
+    }
 
     /// Creates a payment method domain.
-    pub fn create(client: &Client, params: CreatePaymentMethodDomain<'_>) -> Response<PaymentMethodDomain> {
+    pub fn create(
+        client: &Client,
+        params: CreatePaymentMethodDomain<'_>,
+    ) -> Response<PaymentMethodDomain> {
         #[allow(clippy::needless_borrows_for_generic_args)]
         client.post_form("/payment_method_domains", &params)
     }
 
     /// Retrieves the details of an existing payment method domain.
-    pub fn retrieve(client: &Client, id: &PaymentMethodDomainId, expand: &[&str]) -> Response<PaymentMethodDomain> {
+    pub fn retrieve(
+        client: &Client,
+        id: &PaymentMethodDomainId,
+        expand: &[&str],
+    ) -> Response<PaymentMethodDomain> {
         client.get_query(&format!("/payment_method_domains/{}", id), Expand { expand })
     }
 
     /// Updates an existing payment method domain.
-    pub fn update(client: &Client, id: &PaymentMethodDomainId, params: UpdatePaymentMethodDomain<'_>) -> Response<PaymentMethodDomain> {
+    pub fn update(
+        client: &Client,
+        id: &PaymentMethodDomainId,
+        params: UpdatePaymentMethodDomain<'_>,
+    ) -> Response<PaymentMethodDomain> {
         #[allow(clippy::needless_borrows_for_generic_args)]
         client.post_form(&format!("/payment_method_domains/{}", id), &params)
     }
@@ -78,7 +90,6 @@ impl Object for PaymentMethodDomain {
 
 #[derive(Clone, Debug, Default, Deserialize, Serialize)]
 pub struct PaymentMethodDomainResourcePaymentMethodStatus {
-
     /// The status of the payment method on the domain.
     pub status: PaymentMethodDomainResourcePaymentMethodStatusStatus,
 
@@ -88,7 +99,6 @@ pub struct PaymentMethodDomainResourcePaymentMethodStatus {
 
 #[derive(Clone, Debug, Default, Deserialize, Serialize)]
 pub struct PaymentMethodDomainResourcePaymentMethodStatusDetails {
-
     /// The error message associated with the status of the payment method on the domain.
     pub error_message: String,
 }
@@ -96,7 +106,6 @@ pub struct PaymentMethodDomainResourcePaymentMethodStatusDetails {
 /// The parameters for `PaymentMethodDomain::create`.
 #[derive(Clone, Debug, Serialize)]
 pub struct CreatePaymentMethodDomain<'a> {
-
     /// The domain name that this payment method domain object represents.
     pub domain_name: &'a str,
 
@@ -124,7 +133,6 @@ impl<'a> CreatePaymentMethodDomain<'a> {
 /// The parameters for `PaymentMethodDomain::list`.
 #[derive(Clone, Debug, Serialize, Default)]
 pub struct ListPaymentMethodDomains<'a> {
-
     /// The domain name that this payment method domain object represents.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub domain_name: Option<&'a str>,
@@ -175,12 +183,12 @@ impl<'a> ListPaymentMethodDomains<'a> {
 impl Paginable for ListPaymentMethodDomains<'_> {
     type O = PaymentMethodDomain;
     fn set_last(&mut self, item: Self::O) {
-                self.starting_after = Some(item.id());
-            }}
+        self.starting_after = Some(item.id());
+    }
+}
 /// The parameters for `PaymentMethodDomain::update`.
 #[derive(Clone, Debug, Serialize, Default)]
 pub struct UpdatePaymentMethodDomain<'a> {
-
     /// Whether this payment method domain is enabled.
     ///
     /// If the domain is not enabled, payment methods that require a payment method domain will not appear in Elements.
@@ -194,10 +202,7 @@ pub struct UpdatePaymentMethodDomain<'a> {
 
 impl<'a> UpdatePaymentMethodDomain<'a> {
     pub fn new() -> Self {
-        UpdatePaymentMethodDomain {
-            enabled: Default::default(),
-            expand: Default::default(),
-        }
+        UpdatePaymentMethodDomain { enabled: Default::default(), expand: Default::default() }
     }
 }
 
