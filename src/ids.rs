@@ -502,7 +502,7 @@ def_id!(CouponId: String); // N.B. A coupon id can be user-provided so can be an
 def_id!(CreditNoteId, "cn_");
 def_id!(CreditNoteLineItemId, "cnli_");
 def_id!(CustomerBalanceTransactionId, "cbtxn_");
-def_id!(CustomerId, "cus_");
+def_id!(CustomerId, "cus_" | "gcus_");
 def_id!(DiscountId, "di_");
 def_id!(DisputeId, "dp_" | "du_" | "pdp_");
 def_id!(EphemeralKeyId, "ephkey_");
