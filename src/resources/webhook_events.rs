@@ -398,6 +398,12 @@ pub enum EventType {
     TransferReversed,
     #[serde(rename = "transfer.updated")]
     TransferUpdated,
+
+    // MANUAL ADDED
+    #[serde(rename = "refund.updated")]
+    RefundUpdated,
+
+
     #[serde(other)]
     #[default]
     Unknown,
