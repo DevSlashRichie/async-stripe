@@ -14,10 +14,6 @@ pub struct ConfirmSetupIntent {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub payment_method: Option<PaymentMethodId>,
 
-    /// This hash contains details about the mandate to create
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub mandate_data: Option<MandateData>,
-
     /// When included, this hash creates a PaymentMethod that is set as the payment_method value in the SetupIntent.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub payment_method_data: Option<crate::UpdatePaymentIntentPaymentMethodData>,
@@ -32,11 +28,6 @@ pub struct ConfirmSetupIntent {
 
     /// Set to `true` when confirming server-side and using Stripe.js, iOS, or Android client-side SDKs to handle the next actions.
     pub use_stripe_sdk: bool,
-}
-
-#[derive(Clone, Debug, Default, Serialize)]
-pub struct MandateData {
-    pub customer_acceptance: crate::CustomerAcceptance,
 }
 
 /// The set of parameters that can be used when canceling a setup_intent object.

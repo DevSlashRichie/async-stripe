@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::client::{Client, Response};
 use crate::params::{Expandable, Metadata, SearchList};
-use crate::resources::{Currency, PaymentSource, Shipping};
+use crate::resources::{Currency, PaymentSource};
 use crate::{PaymentIntent, PaymentIntentCancellationReason};
 
 impl PaymentIntent {
@@ -172,8 +172,6 @@ pub struct PaymentIntentUpdateParams<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub save_source_to_customer: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub shipping: Option<Shipping>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub source: Option<&'a str>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub transfer_group: Option<&'a str>,
@@ -190,8 +188,6 @@ pub struct PaymentIntentConfirmParams<'a> {
     pub return_url: Option<&'a str>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub save_source_to_customer: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub shipping: Option<Shipping>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub source: Option<&'a str>,
     #[serde(skip_serializing_if = "Option::is_none")]

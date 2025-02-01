@@ -8,7 +8,7 @@ use crate::client::{Client, Response};
 use crate::ids::{ApplicationFeeId, ChargeId};
 use crate::params::{Expand, Expandable, List, Object, Paginable, RangeQuery, Timestamp};
 use crate::resources::{
-    Account, Application, ApplicationFeeRefund, BalanceTransaction, Charge, Currency,
+    Account, Application, ApplicationFeeRefund, Charge, Currency,
 };
 
 /// The resource representing a Stripe "PlatformFee".
@@ -31,8 +31,6 @@ pub struct ApplicationFee {
     /// ID of the Connect application that earned the fee.
     pub application: Expandable<Application>,
 
-    /// Balance transaction that describes the impact of this collected application fee on your account balance (not including refunds).
-    pub balance_transaction: Option<Expandable<BalanceTransaction>>,
 
     /// ID of the charge that the application fee was taken from.
     pub charge: Expandable<Charge>,

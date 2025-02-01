@@ -3,9 +3,7 @@ use serde::{Deserialize, Serialize};
 use crate::client::{Client, Response};
 use crate::ids::{BankAccountId, CardId, CustomerId, PaymentSourceId};
 use crate::params::{Deleted, Expand, List, SearchList};
-use crate::resources::{
-    BankAccount, Customer, PaymentMethod, PaymentSource, PaymentSourceParams, Source,
-};
+use crate::resources::{BankAccount, Customer, PaymentMethod, PaymentSource, PaymentSourceParams};
 
 #[derive(Clone, Debug, Serialize, Default, Eq, PartialEq)]
 pub struct CustomerPaymentMethodRetrieval<'a> {
@@ -175,5 +173,4 @@ impl VerifyBankAccount<'_> {
 pub enum DetachedSource {
     BankAccount(Deleted<BankAccountId>),
     Card(Deleted<CardId>),
-    Source(Source),
 }

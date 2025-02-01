@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::ids::{PaymentSourceId, SourceId, TokenId};
 use crate::params::Object;
-use crate::resources::{Account, BankAccount, Card, Currency, Source};
+use crate::resources::{Account, BankAccount, Card, Currency};
 
 /// A PaymentSourceParams represents all of the supported ways that can
 /// be used.
@@ -34,7 +34,6 @@ pub enum PaymentSourceParams {
 #[serde(tag = "object", rename_all = "snake_case")]
 pub enum PaymentSource {
     Card(Card),
-    Source(Source),
     Account(Account),
     BankAccount(BankAccount),
 }
@@ -44,7 +43,6 @@ impl Object for PaymentSource {
     fn id(&self) -> Self::Id {
         match self {
             PaymentSource::Card(x) => PaymentSourceId::Card(x.id()),
-            PaymentSource::Source(x) => PaymentSourceId::Source(x.id()),
             PaymentSource::Account(x) => PaymentSourceId::Account(x.id()),
             PaymentSource::BankAccount(x) => PaymentSourceId::BankAccount(x.id()),
         }
@@ -52,7 +50,6 @@ impl Object for PaymentSource {
     fn object(&self) -> &'static str {
         match self {
             PaymentSource::Card(x) => x.object(),
-            PaymentSource::Source(x) => x.object(),
             PaymentSource::Account(x) => x.object(),
             PaymentSource::BankAccount(x) => x.object(),
         }

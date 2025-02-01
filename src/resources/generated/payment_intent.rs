@@ -5,18 +5,15 @@
 use serde::{Deserialize, Serialize};
 
 use crate::client::{Client, Response};
-use crate::ids::{
-    CustomerId, MandateId, PaymentIntentId, PaymentMethodConfigurationId, PaymentMethodId,
-};
-use crate::params::{Expand, Expandable, List, Metadata, Object, Paginable, RangeQuery, Timestamp};
+use crate::ids::{CustomerId, PaymentIntentId, PaymentMethodConfigurationId, PaymentMethodId};
+
+use crate::params::{Expand, Expandable, Metadata, Object, Paginable, RangeQuery, Timestamp};
 use crate::resources::{
-    Account, ApiErrors, Application, Charge, Currency, Customer, Invoice,
-    LinkedAccountOptionsUsBankAccount, PaymentIntentNextActionCashappHandleRedirectOrDisplayQrCode,
-    PaymentIntentOffSession, PaymentMethod,
-    PaymentMethodConfigBizPaymentMethodConfigurationDetails,
-    PaymentMethodDetailsCardInstallmentsPlan, PaymentMethodOptionsCustomerBalanceEuBankAccount,
-    PaymentMethodOptionsUsBankAccountMandateOptions, PaymentSource, Review, Shipping,
+    Account, ApiErrors, Application, Charge, Currency, Customer, PaymentIntentOffSession,
+    PaymentMethod, PaymentMethodDetailsCardInstallmentsPlan, PaymentSource,
 };
+
+//use crate::resources::{Review, Shipping};
 
 /// The resource representing a Stripe "PaymentIntent".
 ///
@@ -98,9 +95,6 @@ pub struct PaymentIntent {
     /// Often useful for displaying to users.
     pub description: Option<String>,
 
-    /// ID of the invoice that created this PaymentIntent, if it exists.
-    pub invoice: Option<Expandable<Invoice>>,
-
     /// The payment error encountered in the previous PaymentIntent confirmation.
     ///
     /// It will be cleared if the PaymentIntent is later updated for any reason.
@@ -129,10 +123,6 @@ pub struct PaymentIntent {
     /// ID of the payment method used in this PaymentIntent.
     pub payment_method: Option<Expandable<PaymentMethod>>,
 
-    /// Information about the payment method configuration used for this PaymentIntent.
-    pub payment_method_configuration_details:
-        Option<PaymentMethodConfigBizPaymentMethodConfigurationDetails>,
-
     /// Payment-method-specific configuration for this PaymentIntent.
     pub payment_method_options: Option<PaymentIntentPaymentMethodOptions>,
 
@@ -150,7 +140,7 @@ pub struct PaymentIntent {
     pub receipt_email: Option<String>,
 
     /// ID of the review associated with this PaymentIntent, if any.
-    pub review: Option<Expandable<Review>>,
+    //pub review: Option<Expandable<Review>>,
 
     /// Indicates that you intend to make future payments with this PaymentIntent's payment method.
     ///
@@ -160,7 +150,7 @@ pub struct PaymentIntent {
     pub setup_future_usage: Option<PaymentIntentSetupFutureUsage>,
 
     /// Shipping information for this PaymentIntent.
-    pub shipping: Option<Shipping>,
+    //pub shipping: Option<Shipping>,
 
     /// This is a legacy field that will be removed in the future.
     ///
@@ -183,24 +173,9 @@ pub struct PaymentIntent {
     ///
     /// Read more about each PaymentIntent [status](https://stripe.com/docs/payments/intents#intent-statuses).
     pub status: PaymentIntentStatus,
-
-    /// The data that automatically creates a Transfer after the payment finalizes.
-    ///
-    /// Learn more about the [use case for connected accounts](https://stripe.com/docs/payments/connected-accounts).
-    pub transfer_data: Option<TransferData>,
-
-    /// A string that identifies the resulting payment as part of a group.
-    ///
-    /// Learn more about the [use case for connected accounts](https://stripe.com/docs/connect/separate-charges-and-transfers).
-    pub transfer_group: Option<String>,
 }
 
 impl PaymentIntent {
-    /// Returns a list of PaymentIntents.
-    pub fn list(client: &Client, params: &ListPaymentIntents<'_>) -> Response<List<PaymentIntent>> {
-        client.get_query("/payment_intents", params)
-    }
-
     /// Creates a PaymentIntent object.
     ///
     /// After the PaymentIntent is created, attach a payment method and [confirm](https://stripe.com/docs/api/payment_intents/confirm)
@@ -283,44 +258,7 @@ pub struct PaymentFlowsAutomaticPaymentMethodsPaymentIntent {
 #[derive(Clone, Debug, Default, Deserialize, Serialize)]
 pub struct PaymentIntentNextAction {
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub alipay_handle_redirect: Option<PaymentIntentNextActionAlipayHandleRedirect>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub boleto_display_details: Option<PaymentIntentNextActionBoleto>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub card_await_notification: Option<PaymentIntentNextActionCardAwaitNotification>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub cashapp_handle_redirect_or_display_qr_code:
-        Option<PaymentIntentNextActionCashappHandleRedirectOrDisplayQrCode>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub display_bank_transfer_instructions:
-        Option<PaymentIntentNextActionDisplayBankTransferInstructions>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub konbini_display_details: Option<PaymentIntentNextActionKonbini>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub oxxo_display_details: Option<PaymentIntentNextActionDisplayOxxoDetails>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub paynow_display_qr_code: Option<PaymentIntentNextActionPaynowDisplayQrCode>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub pix_display_qr_code: Option<PaymentIntentNextActionPixDisplayQrCode>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub promptpay_display_qr_code: Option<PaymentIntentNextActionPromptpayDisplayQrCode>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub redirect_to_url: Option<PaymentIntentNextActionRedirectToUrl>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub swish_handle_redirect_or_display_qr_code:
-        Option<PaymentIntentNextActionSwishHandleRedirectOrDisplayQrCode>,
-
     /// Type of the next action to perform, one of `redirect_to_url`, `use_stripe_sdk`, `alipay_handle_redirect`, `oxxo_display_details`, or `verify_with_microdeposits`.
     #[serde(rename = "type")]
     pub type_: String,
@@ -330,19 +268,6 @@ pub struct PaymentIntentNextAction {
     /// The shape of the contents is subject to change and is only intended to be used by Stripe.js.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub use_stripe_sdk: Option<serde_json::Value>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub verify_with_microdeposits: Option<PaymentIntentNextActionVerifyWithMicrodeposits>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub wechat_pay_display_qr_code: Option<PaymentIntentNextActionWechatPayDisplayQrCode>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub wechat_pay_redirect_to_android_app:
-        Option<PaymentIntentNextActionWechatPayRedirectToAndroidApp>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub wechat_pay_redirect_to_ios_app: Option<PaymentIntentNextActionWechatPayRedirectToIosApp>,
 }
 
 #[derive(Clone, Debug, Default, Deserialize, Serialize)]
@@ -768,109 +693,16 @@ pub struct PaymentIntentNextActionWechatPayRedirectToIosApp {
 #[derive(Clone, Debug, Default, Deserialize, Serialize)]
 pub struct PaymentIntentPaymentMethodOptions {
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub acss_debit: Option<PaymentIntentPaymentMethodOptionsAcssDebit>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub affirm: Option<PaymentMethodOptionsAffirm>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub afterpay_clearpay: Option<PaymentMethodOptionsAfterpayClearpay>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub alipay: Option<PaymentMethodOptionsAlipay>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub au_becs_debit: Option<PaymentIntentPaymentMethodOptionsAuBecsDebit>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub bacs_debit: Option<PaymentMethodOptionsBacsDebit>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub bancontact: Option<PaymentMethodOptionsBancontact>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub blik: Option<PaymentIntentPaymentMethodOptionsBlik>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub boleto: Option<PaymentMethodOptionsBoleto>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub card: Option<PaymentIntentPaymentMethodOptionsCard>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     pub card_present: Option<PaymentMethodOptionsCardPresent>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub cashapp: Option<PaymentMethodOptionsCashapp>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub customer_balance: Option<PaymentMethodOptionsCustomerBalance>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub eps: Option<PaymentIntentPaymentMethodOptionsEps>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub fpx: Option<PaymentMethodOptionsFpx>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub giropay: Option<PaymentMethodOptionsGiropay>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub grabpay: Option<PaymentMethodOptionsGrabpay>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub ideal: Option<PaymentMethodOptionsIdeal>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub interac_present: Option<PaymentMethodOptionsInteracPresent>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub klarna: Option<PaymentMethodOptionsKlarna>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub konbini: Option<PaymentMethodOptionsKonbini>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub link: Option<PaymentIntentPaymentMethodOptionsLink>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     pub oxxo: Option<PaymentMethodOptionsOxxo>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub p24: Option<PaymentMethodOptionsP24>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub paynow: Option<PaymentMethodOptionsPaynow>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub paypal: Option<PaymentMethodOptionsPaypal>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub pix: Option<PaymentMethodOptionsPix>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub promptpay: Option<PaymentMethodOptionsPromptpay>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub revolut_pay: Option<PaymentMethodOptionsRevolutPay>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub sepa_debit: Option<PaymentIntentPaymentMethodOptionsSepaDebit>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub sofort: Option<PaymentMethodOptionsSofort>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub swish: Option<PaymentIntentPaymentMethodOptionsSwish>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub us_bank_account: Option<PaymentIntentPaymentMethodOptionsUsBankAccount>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub wechat_pay: Option<PaymentMethodOptionsWechatPay>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub zip: Option<PaymentMethodOptionsZip>,
 }
 
 #[derive(Clone, Debug, Default, Deserialize, Serialize)]
@@ -1054,48 +886,6 @@ pub struct PaymentIntentPaymentMethodOptionsSepaDebit {
 
 #[derive(Clone, Debug, Default, Deserialize, Serialize)]
 pub struct PaymentIntentPaymentMethodOptionsMandateOptionsSepaDebit {}
-
-#[derive(Clone, Debug, Default, Deserialize, Serialize)]
-pub struct PaymentIntentPaymentMethodOptionsSwish {
-    /// The order ID displayed in the Swish app after the payment is authorized.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub reference: Option<String>,
-
-    /// Indicates that you intend to make future payments with this PaymentIntent's payment method.
-    ///
-    /// Providing this parameter will [attach the payment method](https://stripe.com/docs/payments/save-during-payment) to the PaymentIntent's Customer, if present, after the PaymentIntent is confirmed and any required actions from the user are complete.
-    ///
-    /// If no Customer was provided, the payment method can still be [attached](https://stripe.com/docs/api/payment_methods/attach) to a Customer after the transaction completes.  When processing card payments, Stripe also uses `setup_future_usage` to dynamically optimize your payment flow and comply with regional legislation and network rules, such as [SCA](https://stripe.com/docs/strong-customer-authentication).
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub setup_future_usage: Option<PaymentIntentPaymentMethodOptionsSwishSetupFutureUsage>,
-}
-
-#[derive(Clone, Debug, Default, Deserialize, Serialize)]
-pub struct PaymentIntentPaymentMethodOptionsUsBankAccount {
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub financial_connections: Option<LinkedAccountOptionsUsBankAccount>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub mandate_options: Option<PaymentMethodOptionsUsBankAccountMandateOptions>,
-
-    /// Preferred transaction settlement speed.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub preferred_settlement_speed:
-        Option<PaymentIntentPaymentMethodOptionsUsBankAccountPreferredSettlementSpeed>,
-
-    /// Indicates that you intend to make future payments with this PaymentIntent's payment method.
-    ///
-    /// Providing this parameter will [attach the payment method](https://stripe.com/docs/payments/save-during-payment) to the PaymentIntent's Customer, if present, after the PaymentIntent is confirmed and any required actions from the user are complete.
-    ///
-    /// If no Customer was provided, the payment method can still be [attached](https://stripe.com/docs/api/payment_methods/attach) to a Customer after the transaction completes.  When processing card payments, Stripe also uses `setup_future_usage` to dynamically optimize your payment flow and comply with regional legislation and network rules, such as [SCA](https://stripe.com/docs/strong-customer-authentication).
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub setup_future_usage: Option<PaymentIntentPaymentMethodOptionsUsBankAccountSetupFutureUsage>,
-
-    /// Bank account verification method.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub verification_method:
-        Option<PaymentIntentPaymentMethodOptionsUsBankAccountVerificationMethod>,
-}
 
 #[derive(Clone, Debug, Default, Deserialize, Serialize)]
 pub struct PaymentIntentProcessing {
@@ -1282,149 +1072,6 @@ pub struct PaymentMethodOptionsCardPresent {
     ///
     /// Check [incremental_authorization_supported](https://stripe.com/docs/api/charges/object#charge_object-payment_method_details-card_present-incremental_authorization_supported) in the [Confirm](https://stripe.com/docs/api/payment_intents/confirm) response to verify support.
     pub request_incremental_authorization_support: Option<bool>,
-}
-
-#[derive(Clone, Debug, Default, Deserialize, Serialize)]
-pub struct PaymentMethodOptionsCashapp {
-    /// Controls when the funds will be captured from the customer's account.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub capture_method: Option<PaymentMethodOptionsCashappCaptureMethod>,
-
-    /// Indicates that you intend to make future payments with this PaymentIntent's payment method.
-    ///
-    /// Providing this parameter will [attach the payment method](https://stripe.com/docs/payments/save-during-payment) to the PaymentIntent's Customer, if present, after the PaymentIntent is confirmed and any required actions from the user are complete.
-    ///
-    /// If no Customer was provided, the payment method can still be [attached](https://stripe.com/docs/api/payment_methods/attach) to a Customer after the transaction completes.  When processing card payments, Stripe also uses `setup_future_usage` to dynamically optimize your payment flow and comply with regional legislation and network rules, such as [SCA](https://stripe.com/docs/strong-customer-authentication).
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub setup_future_usage: Option<PaymentMethodOptionsCashappSetupFutureUsage>,
-}
-
-#[derive(Clone, Debug, Default, Deserialize, Serialize)]
-pub struct PaymentMethodOptionsCustomerBalance {
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub bank_transfer: Option<PaymentMethodOptionsCustomerBalanceBankTransfer>,
-
-    /// The funding method type to be used when there are not enough funds in the customer balance.
-    ///
-    /// Permitted values include: `bank_transfer`.
-    pub funding_type: Option<PaymentMethodOptionsCustomerBalanceFundingType>,
-
-    /// Indicates that you intend to make future payments with this PaymentIntent's payment method.
-    ///
-    /// Providing this parameter will [attach the payment method](https://stripe.com/docs/payments/save-during-payment) to the PaymentIntent's Customer, if present, after the PaymentIntent is confirmed and any required actions from the user are complete.
-    ///
-    /// If no Customer was provided, the payment method can still be [attached](https://stripe.com/docs/api/payment_methods/attach) to a Customer after the transaction completes.  When processing card payments, Stripe also uses `setup_future_usage` to dynamically optimize your payment flow and comply with regional legislation and network rules, such as [SCA](https://stripe.com/docs/strong-customer-authentication).
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub setup_future_usage: Option<PaymentMethodOptionsCustomerBalanceSetupFutureUsage>,
-}
-
-#[derive(Clone, Debug, Default, Deserialize, Serialize)]
-pub struct PaymentMethodOptionsCustomerBalanceBankTransfer {
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub eu_bank_transfer: Option<PaymentMethodOptionsCustomerBalanceEuBankAccount>,
-
-    /// List of address types that should be returned in the financial_addresses response.
-    ///
-    /// If not specified, all valid types will be returned.  Permitted values include: `sort_code`, `zengin`, `iban`, or `spei`.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub requested_address_types:
-        Option<Vec<PaymentMethodOptionsCustomerBalanceBankTransferRequestedAddressTypes>>,
-
-    /// The bank transfer type that this PaymentIntent is allowed to use for funding Permitted values include: `eu_bank_transfer`, `gb_bank_transfer`, `jp_bank_transfer`, `mx_bank_transfer`, or `us_bank_transfer`.
-    #[serde(rename = "type")]
-    pub type_: Option<PaymentMethodOptionsCustomerBalanceBankTransferType>,
-}
-
-#[derive(Clone, Debug, Default, Deserialize, Serialize)]
-pub struct PaymentMethodOptionsFpx {
-    /// Indicates that you intend to make future payments with this PaymentIntent's payment method.
-    ///
-    /// Providing this parameter will [attach the payment method](https://stripe.com/docs/payments/save-during-payment) to the PaymentIntent's Customer, if present, after the PaymentIntent is confirmed and any required actions from the user are complete.
-    ///
-    /// If no Customer was provided, the payment method can still be [attached](https://stripe.com/docs/api/payment_methods/attach) to a Customer after the transaction completes.  When processing card payments, Stripe also uses `setup_future_usage` to dynamically optimize your payment flow and comply with regional legislation and network rules, such as [SCA](https://stripe.com/docs/strong-customer-authentication).
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub setup_future_usage: Option<PaymentMethodOptionsFpxSetupFutureUsage>,
-}
-
-#[derive(Clone, Debug, Default, Deserialize, Serialize)]
-pub struct PaymentMethodOptionsGiropay {
-    /// Indicates that you intend to make future payments with this PaymentIntent's payment method.
-    ///
-    /// Providing this parameter will [attach the payment method](https://stripe.com/docs/payments/save-during-payment) to the PaymentIntent's Customer, if present, after the PaymentIntent is confirmed and any required actions from the user are complete.
-    ///
-    /// If no Customer was provided, the payment method can still be [attached](https://stripe.com/docs/api/payment_methods/attach) to a Customer after the transaction completes.  When processing card payments, Stripe also uses `setup_future_usage` to dynamically optimize your payment flow and comply with regional legislation and network rules, such as [SCA](https://stripe.com/docs/strong-customer-authentication).
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub setup_future_usage: Option<PaymentMethodOptionsGiropaySetupFutureUsage>,
-}
-
-#[derive(Clone, Debug, Default, Deserialize, Serialize)]
-pub struct PaymentMethodOptionsGrabpay {
-    /// Indicates that you intend to make future payments with this PaymentIntent's payment method.
-    ///
-    /// Providing this parameter will [attach the payment method](https://stripe.com/docs/payments/save-during-payment) to the PaymentIntent's Customer, if present, after the PaymentIntent is confirmed and any required actions from the user are complete.
-    ///
-    /// If no Customer was provided, the payment method can still be [attached](https://stripe.com/docs/api/payment_methods/attach) to a Customer after the transaction completes.  When processing card payments, Stripe also uses `setup_future_usage` to dynamically optimize your payment flow and comply with regional legislation and network rules, such as [SCA](https://stripe.com/docs/strong-customer-authentication).
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub setup_future_usage: Option<PaymentMethodOptionsGrabpaySetupFutureUsage>,
-}
-
-#[derive(Clone, Debug, Default, Deserialize, Serialize)]
-pub struct PaymentMethodOptionsIdeal {
-    /// Indicates that you intend to make future payments with this PaymentIntent's payment method.
-    ///
-    /// Providing this parameter will [attach the payment method](https://stripe.com/docs/payments/save-during-payment) to the PaymentIntent's Customer, if present, after the PaymentIntent is confirmed and any required actions from the user are complete.
-    ///
-    /// If no Customer was provided, the payment method can still be [attached](https://stripe.com/docs/api/payment_methods/attach) to a Customer after the transaction completes.  When processing card payments, Stripe also uses `setup_future_usage` to dynamically optimize your payment flow and comply with regional legislation and network rules, such as [SCA](https://stripe.com/docs/strong-customer-authentication).
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub setup_future_usage: Option<PaymentMethodOptionsIdealSetupFutureUsage>,
-}
-
-#[derive(Clone, Debug, Default, Deserialize, Serialize)]
-pub struct PaymentMethodOptionsInteracPresent {}
-
-#[derive(Clone, Debug, Default, Deserialize, Serialize)]
-pub struct PaymentMethodOptionsKlarna {
-    /// Controls when the funds will be captured from the customer's account.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub capture_method: Option<PaymentMethodOptionsKlarnaCaptureMethod>,
-
-    /// Preferred locale of the Klarna checkout page that the customer is redirected to.
-    pub preferred_locale: Option<String>,
-
-    /// Indicates that you intend to make future payments with this PaymentIntent's payment method.
-    ///
-    /// Providing this parameter will [attach the payment method](https://stripe.com/docs/payments/save-during-payment) to the PaymentIntent's Customer, if present, after the PaymentIntent is confirmed and any required actions from the user are complete.
-    ///
-    /// If no Customer was provided, the payment method can still be [attached](https://stripe.com/docs/api/payment_methods/attach) to a Customer after the transaction completes.  When processing card payments, Stripe also uses `setup_future_usage` to dynamically optimize your payment flow and comply with regional legislation and network rules, such as [SCA](https://stripe.com/docs/strong-customer-authentication).
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub setup_future_usage: Option<PaymentMethodOptionsKlarnaSetupFutureUsage>,
-}
-
-#[derive(Clone, Debug, Default, Deserialize, Serialize)]
-pub struct PaymentMethodOptionsKonbini {
-    /// An optional 10 to 11 digit numeric-only string determining the confirmation code at applicable convenience stores.
-    pub confirmation_number: Option<String>,
-
-    /// The number of calendar days (between 1 and 60) after which Konbini payment instructions will expire.
-    ///
-    /// For example, if a PaymentIntent is confirmed with Konbini and `expires_after_days` set to 2 on Monday JST, the instructions will expire on Wednesday 23:59:59 JST.
-    pub expires_after_days: Option<u32>,
-
-    /// The timestamp at which the Konbini payment instructions will expire.
-    ///
-    /// Only one of `expires_after_days` or `expires_at` may be set.
-    pub expires_at: Option<Timestamp>,
-
-    /// A product descriptor of up to 22 characters, which will appear to customers at the convenience store.
-    pub product_description: Option<String>,
-
-    /// Indicates that you intend to make future payments with this PaymentIntent's payment method.
-    ///
-    /// Providing this parameter will [attach the payment method](https://stripe.com/docs/payments/save-during-payment) to the PaymentIntent's Customer, if present, after the PaymentIntent is confirmed and any required actions from the user are complete.
-    ///
-    /// If no Customer was provided, the payment method can still be [attached](https://stripe.com/docs/api/payment_methods/attach) to a Customer after the transaction completes.  When processing card payments, Stripe also uses `setup_future_usage` to dynamically optimize your payment flow and comply with regional legislation and network rules, such as [SCA](https://stripe.com/docs/strong-customer-authentication).
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub setup_future_usage: Option<PaymentMethodOptionsKonbiniSetupFutureUsage>,
 }
 
 #[derive(Clone, Debug, Default, Deserialize, Serialize)]
@@ -1645,18 +1292,6 @@ pub struct CreatePaymentIntent<'a> {
     #[serde(skip_serializing_if = "Expand::is_empty")]
     pub expand: &'a [&'a str],
 
-    /// ID of the mandate that's used for this payment.
-    ///
-    /// This parameter can only be used with [`confirm=true`](https://stripe.com/docs/api/payment_intents/create#create_payment_intent-confirm).
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub mandate: Option<MandateId>,
-
-    /// This hash contains details about the Mandate to create.
-    ///
-    /// This parameter can only be used with [`confirm=true`](https://stripe.com/docs/api/payment_intents/create#create_payment_intent-confirm).
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub mandate_data: Option<CreatePaymentIntentMandateData>,
-
     /// Set of [key-value pairs](https://stripe.com/docs/api/metadata) that you can attach to an object.
     ///
     /// This can be useful for storing additional information about the object in a structured format.
@@ -1734,10 +1369,6 @@ pub struct CreatePaymentIntent<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub setup_future_usage: Option<PaymentIntentSetupFutureUsage>,
 
-    /// Shipping information for this PaymentIntent.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub shipping: Option<CreatePaymentIntentShipping>,
-
     /// For card charges, use [statement_descriptor_suffix](https://stripe.com/docs/payments/account/statement-descriptors#dynamic).
     ///
     /// Otherwise, you can use this value as the complete description of a charge on your customers' statements.
@@ -1782,8 +1413,6 @@ impl<'a> CreatePaymentIntent<'a> {
             description: Default::default(),
             error_on_requires_action: Default::default(),
             expand: Default::default(),
-            mandate: Default::default(),
-            mandate_data: Default::default(),
             metadata: Default::default(),
             off_session: Default::default(),
             on_behalf_of: Default::default(),
@@ -1796,7 +1425,6 @@ impl<'a> CreatePaymentIntent<'a> {
             receipt_email: Default::default(),
             return_url: Default::default(),
             setup_future_usage: Default::default(),
-            shipping: Default::default(),
             statement_descriptor: Default::default(),
             statement_descriptor_suffix: Default::default(),
             transfer_data: Default::default(),

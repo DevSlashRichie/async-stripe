@@ -430,60 +430,61 @@ pub struct NotificationEventData {
 #[serde(tag = "object", rename_all = "snake_case")]
 pub enum EventObject {
     Account(Account),
-    #[serde(rename = "capability")]
-    AccountCapabilities(AccountCapabilities),
-    Application(Application),
-    ApplicationFee(ApplicationFee),
-    #[serde(rename = "fee_refund")]
-    ApplicationFeeRefund(ApplicationFeeRefund),
-    Balance(Balance),
-    BankAccount(BankAccount),
-    #[serde(rename = "billing_portal.configuration")]
-    BillingPortalConfiguration(BillingPortalConfiguration),
-    Card(Card),
-    Charge(Charge),
-    #[serde(rename = "checkout.session")]
-    CheckoutSession(CheckoutSession),
-    Coupon(Coupon),
-    Customer(Customer),
-    Discount(Discount),
-    Dispute(Dispute),
-    File(File),
-    Invoice(Invoice),
-    #[serde(rename = "invoiceitem")]
-    InvoiceItem(InvoiceItem),
-    #[serde(rename = "issuing.authorization")]
-    IssuingAuthorization(IssuingAuthorization),
-    #[serde(rename = "issuing.card")]
-    IssuingCard(IssuingCard),
-    #[serde(rename = "issuing.cardholder")]
-    IssuingCardholder(IssuingCardholder),
-    #[serde(rename = "issuing.dispute")]
-    IssuingDispute(IssuingDispute),
-    #[serde(rename = "issuing.transaction")]
-    IssuingTransaction(IssuingTransaction),
-    Mandate(Mandate),
     PaymentIntent(PaymentIntent),
-    PaymentLink(PaymentLink),
-    PaymentMethod(PaymentMethod),
-    Payout(Payout),
-    Person(Person),
-    Plan(Plan),
-    Price(Price),
-    Product(Product),
-    PromotionCode(PromotionCode),
-    Quote(Quote),
     Refund(Refund),
-    Review(Review),
-    SetupIntent(SetupIntent),
-    Subscription(Subscription),
-    SubscriptionSchedule(SubscriptionSchedule),
-    TaxId(TaxId),
-    TaxRate(TaxRate),
-    #[serde(rename = "test_helpers.test_clock")]
-    TestHelpersTestClock(TestHelpersTestClock),
-    Topup(Topup),
-    Transfer(Transfer),
+
+    //#[serde(rename = "capability")]
+    //AccountCapabilities(AccountCapabilities),
+    //Application(Application),
+    //ApplicationFee(ApplicationFee),
+    //#[serde(rename = "fee_refund")]
+    //ApplicationFeeRefund(ApplicationFeeRefund),
+    //Balance(Balance),
+    //BankAccount(BankAccount),
+    //#[serde(rename = "billing_portal.configuration")]
+    //BillingPortalConfiguration(BillingPortalConfiguration),
+    //Card(Card),
+    //Charge(Charge),
+    //#[serde(rename = "checkout.session")]
+    //CheckoutSession(CheckoutSession),
+    //Coupon(Coupon),
+    //Customer(Customer),
+    //Discount(Discount),
+    //Dispute(Dispute),
+    //File(File),
+    //Invoice(Invoice),
+    //#[serde(rename = "invoiceitem")]
+    //InvoiceItem(InvoiceItem),
+    //#[serde(rename = "issuing.authorization")]
+    //IssuingAuthorization(IssuingAuthorization),
+    //#[serde(rename = "issuing.card")]
+    //IssuingCard(IssuingCard),
+    //#[serde(rename = "issuing.cardholder")]
+    //IssuingCardholder(IssuingCardholder),
+    //#[serde(rename = "issuing.dispute")]
+    //IssuingDispute(IssuingDispute),
+    //#[serde(rename = "issuing.transaction")]
+    //IssuingTransaction(IssuingTransaction),
+    //Mandate(Mandate),
+    //PaymentLink(PaymentLink),
+    //PaymentMethod(PaymentMethod),
+    //Payout(Payout),
+    //Person(Person),
+    //Plan(Plan),
+    //Price(Price),
+    //Product(Product),
+    //PromotionCode(PromotionCode),
+    //Quote(Quote),
+    //Review(Review),
+    //SetupIntent(SetupIntent),
+    //Subscription(Subscription),
+    //SubscriptionSchedule(SubscriptionSchedule),
+    //TaxId(TaxId),
+    //TaxRate(TaxRate),
+    //#[serde(rename = "test_helpers.test_clock")]
+    //TestHelpersTestClock(TestHelpersTestClock),
+    //Topup(Topup),
+    //Transfer(Transfer),
 }
 
 impl Default for EventObject {

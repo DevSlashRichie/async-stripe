@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use crate::client::{Client, Response};
 use crate::ids::{AccountId, BankAccountId, CardId, ChargeId, SourceId, TokenId};
 use crate::params::{Object, SearchList};
-use crate::resources::{Charge, Rule};
+use crate::resources::Charge;
 
 /// The set of PaymentSource parameters that can be used to create a charge.
 ///
@@ -50,16 +50,6 @@ impl Charge {
     /// For more details see <https://stripe.com/docs/api/charges/search>.
     pub fn search(client: &Client, params: ChargeSearchParams) -> Response<SearchList<Charge>> {
         client.get_query("/charges/search", params)
-    }
-}
-
-impl Object for Rule {
-    type Id = String;
-    fn id(&self) -> Self::Id {
-        self.id.clone()
-    }
-    fn object(&self) -> &'static str {
-        ""
     }
 }
 

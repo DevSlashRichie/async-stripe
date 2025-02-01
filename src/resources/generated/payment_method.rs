@@ -8,8 +8,7 @@ use crate::client::{Client, Response};
 use crate::ids::{CustomerId, PaymentMethodId};
 use crate::params::{Expand, Expandable, List, Metadata, Object, Paginable, Timestamp};
 use crate::resources::{
-    Address, BillingDetails, Charge, Customer, PaymentMethodCardPresentNetworks, RadarRadarOptions,
-    SetupAttempt,
+    Address, BillingDetails, Charge, Customer, PaymentMethodCardPresentNetworks, SetupAttempt,
 };
 
 /// The resource representing a Stripe "PaymentMethod".
@@ -123,9 +122,6 @@ pub struct PaymentMethod {
 
     #[serde(skip_serializing_if = "Option::is_none")]
     pub promptpay: Option<PaymentMethodPromptpay>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub radar_options: Option<RadarRadarOptions>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     pub revolut_pay: Option<PaymentMethodRevolutPay>,

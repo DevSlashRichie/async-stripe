@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::ids::ApplicationFeeRefundId;
 use crate::params::{Expandable, Metadata, Object, Timestamp};
-use crate::resources::{ApplicationFee, BalanceTransaction, Currency};
+use crate::resources::{ApplicationFee, Currency};
 
 /// The resource representing a Stripe "FeeRefund".
 ///
@@ -18,9 +18,6 @@ pub struct ApplicationFeeRefund {
 
     /// Amount, in cents (or local equivalent).
     pub amount: i64,
-
-    /// Balance transaction that describes the impact on your account balance.
-    pub balance_transaction: Option<Expandable<BalanceTransaction>>,
 
     /// Time at which the object was created.
     ///

@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
 use crate::client::{Client, Response};
 use crate::ids::{ChargeId, CustomerId, PaymentIntentId, RefundId};
 use crate::params::{Expand, Expandable, List, Metadata, Object, Paginable, RangeQuery, Timestamp};
-use crate::resources::{BalanceTransaction, Charge, Currency, PaymentIntent, TransferReversal};
+use crate::resources::{Charge, Currency, PaymentIntent};
 
 /// The resource representing a Stripe "Refund".
 ///
@@ -19,9 +19,6 @@ pub struct Refund {
 
     /// Amount, in cents (or local equivalent).
     pub amount: i64,
-
-    /// Balance transaction that describes the impact on your account balance.
-    pub balance_transaction: Option<Expandable<BalanceTransaction>>,
 
     /// ID of the charge that's refunded.
     pub charge: Option<Expandable<Charge>>,
@@ -44,10 +41,6 @@ pub struct Refund {
 
     #[serde(skip_serializing_if = "Option::is_none")]
     pub destination_details: Option<RefundDestinationDetails>,
-
-    /// After the refund fails, this balance transaction describes the adjustment made on your account balance that reverses the initial balance transaction.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub failure_balance_transaction: Option<Expandable<BalanceTransaction>>,
 
     /// Provides the reason for the refund failure.
     ///
@@ -76,21 +69,11 @@ pub struct Refund {
     /// This is the transaction number that appears on email receipts sent for this refund.
     pub receipt_number: Option<String>,
 
-    /// The transfer reversal that's associated with the refund.
-    ///
-    /// Only present if the charge came from another Stripe account.
-    pub source_transfer_reversal: Option<Expandable<TransferReversal>>,
-
     /// Status of the refund.
     ///
     /// This can be `pending`, `requires_action`, `succeeded`, `failed`, or `canceled`.
     /// Learn more about [failed refunds](https://stripe.com/docs/refunds#failed-refunds).
     pub status: Option<String>,
-
-    /// This refers to the transfer reversal object if the accompanying transfer reverses.
-    ///
-    /// This is only applicable if the charge was created using the destination parameter.
-    pub transfer_reversal: Option<Expandable<TransferReversal>>,
 }
 
 impl Refund {
